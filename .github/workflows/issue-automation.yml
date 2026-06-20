@@ -12,46 +12,72 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Auto-label issue by content
+      # --- Bootstrap: auto-create labels on first run ---
+      - name: Ensure labels exist
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const labels = [
+              {name: 'bug',           color: 'd73a4a', description: 'Bug 报告'},
+              {name: 'enhancement',   color: 'a2eeef', description: '功能建议'},
+              {name: 'security',      color: 'd73a4a', description: '安全问题'},
+              {name: 'documentation', color: '0075ca', description: '文档相关'},
+              {name: 'question',      color: 'd876e3', description: '疑问 / 求助'},
+              {name: 'needs-triage',  color: 'ededed', description: '待分类'},
+            ];
+            for (const label of labels) {
+              try {
+                await github.rest.issues.getLabel({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  name: label.name,
+                });
+              } catch (e) {
+                if (e.status === 404) {
+                  await github.rest.issues.createLabel({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    name: label.name,
+                    color: label.color,
+                    description: label.description,
+                  });
+                }
+              }
+            }
+
+      # --- Auto-categorize by title + body keywords ---
+      - name: Auto-label by content
         uses: actions/github-script@v7
         with:
           script: |
             const title = context.payload.issue.title.toLowerCase();
-            const body = (context.payload.issue.body || '').toLowerCase();
-            const combined = title + ' ' + body;
-            const labels = [];
+            const body  = (context.payload.issue.body || '').toLowerCase();
+            const text  = title + ' ' + body;
 
-            // Bug
-            if (/bug|错误|异常|故障|regression/i.test(combined)) {
-              labels.push('bug');
-            }
+            const labelsToAdd = [];
 
-            // Feature / enhancement
-            if (/建议|feature|新功能|需求|suggestion|enhancement|request/i.test(combined)) {
-              labels.push('enhancement');
-            }
+            const rules = [
+              {keywords: ['bug', '错误', '异常', '报错', '崩溃', 'crash', 'regression'],                      label: 'bug'},
+              {keywords: ['建议', 'feature', '新功能', '希望', '增加', '添加', 'enhancement', 'request'],      label: 'enhancement'},
+              {keywords: ['安全', 'security', '漏洞', '注入', 'xss', 'sql注入', 'vulnerability'],               label: 'security'},
+              {keywords: ['文档', 'docs', 'readme', '说明', 'documentation'],                                   label: 'documentation'},
+              {keywords: ['疑问', '问题', 'how to', '求助', 'help', 'question'],                                label: 'question'},
+            ];
 
-            // Security
-            if (/安全|security|漏洞|vulnerability/i.test(combined)) {
-              labels.push('security');
-            }
-
-            // Documentation
-            if (/文档|documentation|docs|readme/i.test(combined)) {
-              labels.push('documentation');
-            }
-
-            // Question
-            if (/疑问|问题|how to|求助|help|question/i.test(combined)) {
-              labels.push('question');
+            for (const {keywords, label} of rules) {
+              if (keywords.some(k => text.includes(k))) {
+                labelsToAdd.push(label);
+              }
             }
 
             // Always add needs-triage for initial review
-            labels.push('needs-triage');
+            labelsToAdd.push('needs-triage');
 
-            await github.rest.issues.addLabels({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-              labels: labels,
-            });
+            if (labelsToAdd.length > 0) {
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.payload.issue.number,
+                labels: labelsToAdd,
+              });
+            }
