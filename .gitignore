@@ -20,7 +20,6 @@ dist/
 .env.local
 .env.*.local
 *.log
-pnpm-lock.yaml
 
 # ==================== Gradle (if used) ====================
 .gradle/
