@@ -1,0 +1,109 @@
+name: PR Summary
+
+on:
+  workflow_run:
+    workflows: ['Backend CI', 'Frontend CI']
+    types: [completed]
+
+permissions:
+  pull-requests: write
+  checks: read
+
+jobs:
+  comment:
+    runs-on: ubuntu-latest
+    if: github.event.workflow_run.event == 'pull_request'
+
+    steps:
+      - name: Extract PR info
+        uses: actions/github-script@v7
+        id: pr-info
+        with:
+          script: |
+            const run = context.payload.workflow_run;
+            const prs = run.pull_requests;
+            if (prs.length === 0) {
+              core.setFailed('No associated PR found');
+              return;
+            }
+            const pr = prs[0];
+            core.exportVariable('PR_NUMBER', pr.number);
+            core.exportVariable('HEAD_SHA', run.head_sha);
+            core.setOutput('number', pr.number);
+            core.setOutput('sha', run.head_sha);
+
+      - name: Fetch CI statuses
+        id: ci-status
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const sha = process.env.HEAD_SHA;
+
+            const { data: checkRuns } = await github.rest.checks.listForRef({
+              owner, repo, ref: sha, per_page: 50
+            });
+
+            const jobRuns = {};
+            for (const run of checkRuns.check_runs) {
+              jobRuns[run.name] = run;
+            }
+
+            const checks = [
+              { job: 'backend-test',      label: '后端编译与测试' },
+              { job: 'frontend-check',    label: '前端类型检查 & 代码风格' },
+            ];
+
+            const lines = ['## 🤖 CI 检查摘要\n'];
+            lines.push('| 检查项 | 状态 |');
+            lines.push('|--------|------|');
+
+            let allPassed = true;
+            for (const { job, label } of checks) {
+              const result = jobRuns[job];
+              if (!result) {
+                lines.push(`| ${label} | ⏳ 等待中 |`);
+                allPassed = false;
+              } else if (result.conclusion === 'success') {
+                lines.push(`| ${label} | ✅ 通过 |`);
+              } else {
+                lines.push(`| ${label} | ❌ ${result.conclusion} |`);
+                allPassed = false;
+              }
+            }
+
+            lines.push('');
+            lines.push(`> 提交: \`${sha.substring(0, 7)}\``);
+            lines.push(`> ${allPassed ? '✅ 所有检查通过' : '❌ 部分检查未通过，请查看详情'}`);
+
+            core.exportVariable('SUMMARY_BODY', lines.join('\n'));
+            core.setOutput('body', lines.join('\n'));
+
+      - name: Post / update CI summary comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const prNumber = parseInt(process.env.PR_NUMBER);
+            const body = process.env.SUMMARY_BODY;
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner, repo, issue_number: prNumber, per_page: 100,
+            });
+
+            const marker = 'CI 检查摘要';
+            const existing = comments.find(
+              c => c.user.type === 'Bot' && c.body.includes(marker)
+            );
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner, repo, comment_id: existing.id, body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner, repo, issue_number: prNumber, body,
+              });
+            }
