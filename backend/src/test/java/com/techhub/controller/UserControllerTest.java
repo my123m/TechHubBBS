@@ -117,7 +117,7 @@ class UserControllerTest {
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(200))
-                .andExpect(jsonPath("$.message").value("success"));
+                .andExpect(jsonPath("$.message").value("更新成功"));
     }
 
     // ==================== GET /users/{id} ====================
@@ -219,6 +219,22 @@ class UserControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value(400))
                 .andExpect(jsonPath("$.message").value("原密码不正确"));
+    }
+
+    @Test
+    @DisplayName("changePassword — 新密码过短返回 400")
+    void changePassword_ShortNewPassword_Returns400() throws Exception {
+        PasswordChangeRequest request = new PasswordChangeRequest();
+        request.setOldPassword("oldPass123");
+        request.setNewPassword("a");
+
+        mockMvc.perform(patch("/api/v1/users/me/password")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value(400))
+                .andExpect(jsonPath("$.message").value(
+                        org.hamcrest.Matchers.containsString("密码长度需在6-100个字符之间")));
     }
 
     // ==================== GET /users/me/favorites ====================

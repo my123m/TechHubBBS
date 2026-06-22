@@ -1,0 +1,26 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]: TechHub
+      - generic [ref=e7]: 技术社区
+    - generic [ref=e8]:
+      - generic [ref=e9]:
+        - generic [ref=e13]:
+          - img [ref=e16]
+          - textbox "用户名" [ref=e18]
+        - generic [ref=e23]:
+          - img [ref=e26]
+          - textbox "密码" [ref=e29]
+        - generic [ref=e33]:
+          - img [ref=e36]
+          - textbox "确认密码" [ref=e39]
+        - generic [ref=e43]:
+          - img [ref=e46]
+          - textbox "邮箱（选填）" [ref=e49]
+        - button "注 册" [ref=e53] [cursor=pointer]:
+          - generic [ref=e54]: 注 册
+      - generic [ref=e55]:
+        - generic [ref=e56]: 已有账号？
+        - generic [ref=e58] [cursor=pointer]: 立即登录
+  - generic "Toggle devtools panel" [ref=e60] [cursor=pointer]:
+    - img [ref=e61]

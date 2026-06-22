@@ -600,6 +600,23 @@ describe('PostDetailPage', () => {
       expect(relatedSection.text()).toContain('相似度 85%')
     })
 
+    it('does not render similarity span when score is null', async () => {
+      mockRecommendationApi.getRelatedPosts.mockResolvedValue({
+        data: [
+          { postId: '2', title: '相关帖子1', authorName: 'author2', similarityScore: null },
+          { postId: '3', title: '相关帖子2', authorName: 'author3', similarityScore: 0.72 },
+        ],
+      })
+      const { wrapper } = await mountPage()
+      const cards = wrapper.findAll('.post-detail__related-card')
+      expect(cards.length).toBe(2)
+      // 第一个卡片 similarityScore 为 null，不应渲染相似度标签
+      expect(cards[0]!.find('.post-detail__related-similarity').exists()).toBe(false)
+      // 第二个卡片 similarityScore 非 null，应正常显示
+      expect(cards[1]!.find('.post-detail__related-similarity').exists()).toBe(true)
+      expect(cards[1]!.text()).toContain('相似度 72%')
+    })
+
     it('does not render related section when no related posts', async () => {
       mockRecommendationApi.getRelatedPosts.mockResolvedValue({ data: [] })
       const { wrapper } = await mountPage()

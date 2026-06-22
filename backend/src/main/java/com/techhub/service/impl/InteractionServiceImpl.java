@@ -5,12 +5,12 @@ import com.techhub.common.BusinessException;
 import com.techhub.common.ResultCode;
 import com.techhub.entity.Comment;
 import com.techhub.entity.Favorite;
-import com.techhub.entity.Notification;
+
 import com.techhub.entity.Post;
 import com.techhub.entity.UserLike;
 import com.techhub.mapper.CommentMapper;
 import com.techhub.mapper.FavoriteMapper;
-import com.techhub.mapper.NotificationMapper;
+
 import com.techhub.mapper.PostMapper;
 import com.techhub.mapper.UserLikeMapper;
 import com.techhub.security.SecurityUtils;
@@ -34,7 +34,6 @@ public class InteractionServiceImpl implements InteractionService {
     private final CommentMapper commentMapper;
     private final DivineCommentService divineCommentService;
     private final NotificationService notificationService;
-    private final NotificationMapper notificationMapper;
 
     // ==================== 帖子点赞 ====================
 
@@ -66,14 +65,7 @@ public class InteractionServiceImpl implements InteractionService {
 
         try {
             if (!userId.equals(post.getAuthorId())) {
-                Long count = notificationMapper.selectCount(
-                        new LambdaQueryWrapper<Notification>()
-                                .eq(Notification::getUserId, post.getAuthorId())
-                                .eq(Notification::getType, "LIKE")
-                                .eq(Notification::getSourceId, postId));
-                if (count == null || count == 0) {
-                    notificationService.create(post.getAuthorId(), "LIKE", postId, "POST", null, "赞了你的帖子");
-                }
+                notificationService.create(post.getAuthorId(), "LIKE", postId, "POST", null, "赞了你的帖子");
             }
         } catch (Exception e) {
             log.warn("创建帖子点赞通知失败: postId={}, error={}", postId, e.getMessage());
@@ -175,14 +167,7 @@ public class InteractionServiceImpl implements InteractionService {
 
         try {
             if (!userId.equals(comment.getUserId())) {
-                Long count = notificationMapper.selectCount(
-                        new LambdaQueryWrapper<Notification>()
-                                .eq(Notification::getUserId, comment.getUserId())
-                                .eq(Notification::getType, "LIKE")
-                                .eq(Notification::getSourceId, commentId));
-                if (count == null || count == 0) {
-                    notificationService.create(comment.getUserId(), "LIKE", commentId, "COMMENT", comment.getPostId(), "赞了你的评论");
-                }
+                notificationService.create(comment.getUserId(), "LIKE", commentId, "COMMENT", comment.getPostId(), "赞了你的评论");
             }
         } catch (Exception e) {
             log.warn("创建评论点赞通知失败: commentId={}, error={}", commentId, e.getMessage());

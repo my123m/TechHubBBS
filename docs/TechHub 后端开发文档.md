@@ -1087,6 +1087,13 @@ volumes:
   redis_data:
 ```
 
+**Profiles 机制说明：**
+
+实际 `docker-compose.yml` 还包含 `app` 服务（配置了 `profiles: ["full"]`），因此：
+
+- **本地开发**：`docker compose up -d` 默认只启动 mysql + redis（app 在 IDE 运行）
+- **全栈部署**：`docker compose --profile full up -d` 启动 mysql + redis + app（前后端全部容器化）
+
 ---
 
 ## 7. 安全实现
@@ -3464,8 +3471,8 @@ ENTRYPOINT ["java", "-jar", "-Djava.security.egd=file:/dev/./urandom", "app.jar"
 # 构建镜像
 docker build -t techhub-backend:latest .
 
-# 启动（配合 docker-compose）
-docker compose up -d
+# 启动（配合 docker-compose，需要 --profile full 启用 app 服务）
+docker compose --profile full up -d
 
 # 单独启动后端
 docker run -d \

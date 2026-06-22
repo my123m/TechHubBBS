@@ -6,9 +6,9 @@
 
 -- ==================== 用户 ====================
 INSERT INTO `user` (`id`, `username`, `password`, `email`, `avatar_url`, `bio`, `role`, `status`, `create_time`, `update_time`) VALUES
-(1, 'admin',    '$2a$10$sDZZncozKdyznb.ePB7qxuQGQWRjk/EFENqWsi8c82DSCRAdthDT2', 'admin@techhub.com',    NULL, '系统管理员，热爱技术，擅长全栈开发',                              'ADMIN',     1, '2026-01-01 08:00:00', '2026-01-01 08:00:00'),
-(2, 'moderator', '$2a$10$sDZZncozKdyznb.ePB7qxuQGQWRjk/EFENqWsi8c82DSCRAdthDT2', 'moderator@techhub.com', NULL, '版主，Java 后端开发者，开源爱好者',                               'MODERATOR', 1, '2026-01-02 10:00:00', '2026-01-02 10:00:00'),
-(3, 'user',     '$2a$10$sDZZncozKdyznb.ePB7qxuQGQWRjk/EFENqWsi8c82DSCRAdthDT2', 'user@techhub.com',      NULL, '全栈工程师，正在学习 Spring Boot 和 Vue 3，欢迎交流',                'USER',      1, '2026-01-15 14:30:00', '2026-01-15 14:30:00');
+(1, 'admin',     '$2a$10$sDZZncozKdyznb.ePB7qxuQGQWRjk/EFENqWsi8c82DSCRAdthDT2', 'admin@techhub.com',    'https://api.dicebear.com/9.x/initials/svg?seed=admin',     '系统管理员，热爱技术，擅长全栈开发',                              'ADMIN',     1, '2026-01-01 08:00:00', '2026-01-01 08:00:00'),
+(2, 'moderator', '$2a$10$sDZZncozKdyznb.ePB7qxuQGQWRjk/EFENqWsi8c82DSCRAdthDT2', 'moderator@techhub.com', 'https://api.dicebear.com/9.x/initials/svg?seed=moderator', '版主，Java 后端开发者，开源爱好者',                               'MODERATOR', 1, '2026-01-02 10:00:00', '2026-01-02 10:00:00'),
+(3, 'user',      '$2a$10$sDZZncozKdyznb.ePB7qxuQGQWRjk/EFENqWsi8c82DSCRAdthDT2', 'user@techhub.com',      'https://api.dicebear.com/9.x/initials/svg?seed=user',      '全栈工程师，正在学习 Spring Boot 和 Vue 3，欢迎交流',                'USER',      1, '2026-01-15 14:30:00', '2026-01-15 14:30:00');
 
 -- ==================== 版块 ====================
 INSERT INTO `category` (`id`, `name`, `description`, `sort_order`, `status`, `create_time`) VALUES

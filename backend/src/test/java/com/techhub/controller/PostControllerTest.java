@@ -130,13 +130,19 @@ class PostControllerTest {
     }
 
     @Test
-    @DisplayName("listPosts — size>50 返回 400")
-    void listPosts_SizeExceedsMax_Returns400() throws Exception {
+    @DisplayName("listPosts — size>50 由 Service 层兜底返回 200")
+    void listPosts_SizeExceeds50_Returns200() throws Exception {
+        PageResult<PostVO> pageResult = PageResult.of(List.of(mockPost), 50, 50, 1);
+
+        when(postService.listPosts(any(PostListQuery.class), eq(null)))
+                .thenReturn(pageResult);
+
         mockMvc.perform(get("/api/v1/posts")
                         .param("page", "1")
                         .param("size", "100")
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(200));
     }
 
     @Test

@@ -1,6 +1,7 @@
 package com.techhub.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.techhub.common.BusinessException;
 import com.techhub.common.PageResult;
@@ -19,7 +20,6 @@ import com.techhub.service.PostService;
 import com.techhub.service.PostVisibilityService;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -81,18 +81,16 @@ public class PostServiceImpl implements PostService {
             wrapper.orderByDesc(Post::getType).orderByDesc(Post::getCreateTime);
         }
 
+        boolean isLoggedIn = currentUserId != null;
+        boolean isAdmin = isAdmin();
+        postVisibilityService.applyVisibilityFilter(wrapper, currentUserId, isLoggedIn, isAdmin);
+
         Page<Post> mpPage = new Page<>(page, size);
         Page<Post> result = postMapper.selectPage(mpPage, wrapper);
 
-        boolean isLoggedIn = currentUserId != null;
-        boolean isAdmin = isAdmin();
-
-        List<PostVO> voList = new ArrayList<>();
-        for (Post post : result.getRecords()) {
-            if (postVisibilityService.isVisible(post, currentUserId, isLoggedIn, isAdmin)) {
-                voList.add(toPostVO(post, currentUserId));
-            }
-        }
+        List<PostVO> voList = result.getRecords().stream()
+                .map(p -> toPostVO(p, currentUserId))
+                .toList();
 
         return new PageResult<>(voList, result.getTotal(), size, page);
     }
@@ -147,9 +145,11 @@ public class PostServiceImpl implements PostService {
         boolean isAdmin = isAdmin();
         postVisibilityService.checkVisibleOrThrow(post, currentUserId, isAdmin);
 
-        // 浏览量 +1
+        // 浏览量 +1（原子更新，避免读-改-写竞态条件导致漏计数）
+        postMapper.update(null, new LambdaUpdateWrapper<Post>()
+                .eq(Post::getId, postId)
+                .setSql("view_count = view_count + 1"));
         post.setViewCount(post.getViewCount() + 1);
-        postMapper.updateById(post);
 
         return toPostVO(post, currentUserId);
     }

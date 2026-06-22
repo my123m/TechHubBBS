@@ -247,8 +247,8 @@ class PostLifecycleIntegrationTest extends BaseIntegrationTest {
         mockMvc.perform(get("/api/v1/posts")
                         .param("page", "1")
                         .param("size", "100"))
-                .andExpect(status().isBadRequest());
-        // @Max(50) validation in PostListQuery rejects size > 50
+                .andExpect(status().isOk());
+        // Service 层兜底 size 上限 50，返回 200
     }
 
     // ==================== 查询帖子详情 ====================

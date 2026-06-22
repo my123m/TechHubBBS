@@ -21,7 +21,7 @@ describe('userApi', () => {
 
   it('updateMe sends PATCH /users/me with body', async () => {
     const data: UserUpdateRequest = { bio: 'new bio' }
-    mockApi.mockResolvedValue({} as R<UserDetailVO>)
+    mockApi.mockResolvedValue({} as R<null>)
     await userApi.updateMe(data)
     expect(mockApi).toHaveBeenCalledWith('/users/me', { method: 'PATCH', body: data })
   })

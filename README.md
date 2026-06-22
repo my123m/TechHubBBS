@@ -109,6 +109,8 @@ docker-compose up -d
 
 这将启动 MySQL 8.0（端口 3306）和 Redis 7（端口 6379）。
 
+> **全栈部署**：如需一并启动后端应用容器，使用 `docker compose --profile full up -d`。
+
 ### 2. 启动后端
 
 ```bash

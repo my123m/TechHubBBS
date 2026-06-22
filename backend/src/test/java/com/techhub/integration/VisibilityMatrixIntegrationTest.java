@@ -337,6 +337,38 @@ class VisibilityMatrixIntegrationTest extends BaseIntegrationTest {
                 .andExpect(jsonPath("$.data.records", hasSize(4)));
     }
 
+    @Test
+    @DisplayName("帖子列表分页 → total 与 pages 仅基于可见帖子（回归 issue #14）")
+    void listPosts_PaginationTotalReflectsVisibleOnly() throws Exception {
+        // 创建 15 公开 + 10 私密，游客不可见私密
+        for (int i = 0; i < 15; i++) {
+            createPost(0); // PUBLIC
+        }
+        for (int i = 0; i < 10; i++) {
+            createPost(3); // PRIVATE
+        }
+
+        // 游客请求 page 1 size=10 → 应看到 10 条公开帖，total=15，pages=2
+        mockMvc.perform(get("/api/v1/posts")
+                        .param("page", "1")
+                        .param("size", "10"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.total").value(15))
+                .andExpect(jsonPath("$.data.pages").value(2))
+                .andExpect(jsonPath("$.data.current").value(1))
+                .andExpect(jsonPath("$.data.size").value(10))
+                .andExpect(jsonPath("$.data.records", hasSize(10)));
+
+        // 游客请求 page 2 size=10 → 应看到剩余 5 条公开帖
+        mockMvc.perform(get("/api/v1/posts")
+                        .param("page", "2")
+                        .param("size", "10"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.total").value(15))
+                .andExpect(jsonPath("$.data.pages").value(2))
+                .andExpect(jsonPath("$.data.records", hasSize(5)));
+    }
+
     // ==================== 管理员权限 ====================
 
     @Test
@@ -428,5 +460,44 @@ class VisibilityMatrixIntegrationTest extends BaseIntegrationTest {
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.data.records", hasSize(4)));
         }
+    }
+
+    @Test
+    @DisplayName("用户帖子列表分页 → total 与 pages 仅基于可见帖子（回归 issue #14，getUserPosts）")
+    void getUserPosts_PaginationTotalReflectsVisibleOnly() throws Exception {
+        // 创建 15 公开 + 10 私密
+        for (int i = 0; i < 15; i++) {
+            createPost(0); // PUBLIC
+        }
+        for (int i = 0; i < 10; i++) {
+            createPost(3); // PRIVATE
+        }
+
+        // 游客查看作者帖子 → 仅 15 条公开可见，total=15
+        mockMvc.perform(get("/api/v1/users/{id}/posts", authorId)
+                        .param("page", "1")
+                        .param("size", "10"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.total").value(15))
+                .andExpect(jsonPath("$.data.pages").value(2))
+                .andExpect(jsonPath("$.data.records", hasSize(10)));
+
+        // 陌生人查看作者帖子 → 也仅见 15 条（作者不是他的关注对象）
+        mockMvc.perform(get("/api/v1/users/{id}/posts", authorId)
+                        .header("Authorization", bearerToken(strangerToken))
+                        .param("page", "1")
+                        .param("size", "10"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.total").value(15));
+
+        // 作者查看自己帖子 → 全部 25 条可见（含私密）
+        mockMvc.perform(get("/api/v1/users/{id}/posts", authorId)
+                        .header("Authorization", bearerToken(authorToken))
+                        .param("page", "1")
+                        .param("size", "10"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.total").value(25))
+                .andExpect(jsonPath("$.data.pages").value(3))
+                .andExpect(jsonPath("$.data.records", hasSize(10)));
     }
 }

@@ -25,16 +25,22 @@ jobs:
             const headBranch = run.head_branch;
             const htmlUrl = run.html_url;
 
-            // Find PR number via head_sha (works for same-repo and fork PRs)
+            // 通过 REST API 获取 workflow run 关联的 PR。
+            // workflow_run webhook payload 不含 pull_requests 数组，
+            // 且 listPullRequestsAssociatedWithCommit 对 pull_request 事件
+            // 产生的 merge commit SHA 无效，必须显式调 getWorkflowRun REST。
             let prNumber = null;
-            const { data: associated } = await github.rest.repos.listPullRequestsAssociatedWithCommit({
+            let headSha = run.head_sha;
+            const { data: runDetail } = await github.rest.actions.getWorkflowRun({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              commit_sha: run.head_sha,
+              run_id: run.id,
             });
-            const openPr = associated.find(pr => pr.state === 'open');
-            if (openPr) {
-              prNumber = openPr.number;
+            if (runDetail.pull_requests && runDetail.pull_requests.length > 0) {
+              prNumber = runDetail.pull_requests[0].number;
+              if (runDetail.pull_requests[0].head?.sha) {
+                headSha = runDetail.pull_requests[0].head.sha;
+              }
             }
 
             if (!prNumber) {
@@ -54,7 +60,7 @@ jobs:
             // Post or update a comment
             const icon = conclusion === 'success' ? '✅' : '❌';
             const body = `${icon} **${workflowName}**: ${conclusion}\n` +
-                         `提交: \`${run.head_sha.substring(0, 7)}\` | ` +
+                         `提交: \`${headSha.substring(0, 7)}\` | ` +
                          `[查看运行详情](${htmlUrl})`;
 
             const { data: comments } = await github.rest.issues.listComments({

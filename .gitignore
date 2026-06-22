@@ -37,6 +37,8 @@ Desktop.ini
 .omo/
 .opencode/
 .sisyphus/
+opencode.json
+.codegraph/
 
 # ==================== Environment ====================
 .env

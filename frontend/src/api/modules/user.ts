@@ -9,7 +9,7 @@ export const userApi = {
   getMe: () => api<R<UserDetailVO>>('/users/me'),
 
   /** Update current user profile (partial) */
-  updateMe: (data: UserUpdateRequest) => api<R<UserDetailVO>>('/users/me', { method: 'PATCH', body: data }),
+  updateMe: (data: UserUpdateRequest) => api<R<null>>('/users/me', { method: 'PATCH', body: data }),
 
   /** Get public profile by user ID */
   getById: (id: string) => api<R<UserProfileVO>>(`/users/${id}`),

@@ -1,0 +1,54 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e9]:
+    - banner [ref=e10]:
+      - generic [ref=e11]:
+        - link "TechHub" [ref=e12] [cursor=pointer]:
+          - /url: /
+        - generic [ref=e13]:
+          - button "版块" [ref=e15] [cursor=pointer]:
+            - text: 版块
+            - img [ref=e17]
+          - generic [ref=e20]:
+            - img [ref=e23]
+            - textbox "搜索..." [ref=e25]
+        - link "登录" [ref=e29] [cursor=pointer]:
+          - /url: /login
+    - main [ref=e30]:
+      - generic [ref=e767]:
+        - generic [ref=e768]:
+          - heading "探索 TechHub" [level=1] [ref=e769]
+          - paragraph [ref=e770]: 发现技术社区的精彩内容
+        - generic [ref=e771]:
+          - tablist [ref=e775]:
+            - tab "推荐" [selected] [ref=e777]:
+              - generic [ref=e778]:
+                - img [ref=e780]
+                - text: 推荐
+            - tab "热门" [ref=e782]:
+              - generic [ref=e783]:
+                - img [ref=e785]
+                - text: 热门
+          - tabpanel "推荐" [ref=e788]:
+            - generic [ref=e789]:
+              - img [ref=e791]
+              - heading "登录解锁个性化推荐" [level=3] [ref=e793]
+              - paragraph [ref=e794]: 登录后我们将根据您的阅读偏好，为您智能推荐优质技术内容
+              - link "立即登录" [ref=e795] [cursor=pointer]:
+                - /url: /login?redirect=/
+                - button "立即登录" [ref=e796]:
+                  - generic [ref=e797]: 立即登录
+    - contentinfo [ref=e538]:
+      - generic [ref=e539]:
+        - generic [ref=e540]: TechHub © 2026
+        - navigation [ref=e541]:
+          - link "关于" [ref=e542] [cursor=pointer]:
+            - /url: /about
+          - link "反馈" [ref=e543] [cursor=pointer]:
+            - /url: /feedback
+          - link "用户协议" [ref=e544] [cursor=pointer]:
+            - /url: /terms
+  - generic [ref=e3]:
+    - generic "Toggle devtools panel" [ref=e4] [cursor=pointer]:
+      - img [ref=e5]
+    - generic "Toggle Component Inspector" [ref=e546] [cursor=pointer]:
+      - img [ref=e547]
