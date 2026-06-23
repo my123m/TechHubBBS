@@ -569,7 +569,7 @@ Spring Security Filter Chain
 
 ### 7.4 环境安全
 
-- 敏感配置（DB 密码、JWT Secret、AI API Key）通过环境变量注入，不入库
+- 敏感配置（DB 密码、JWT Secret、CORS 白名单域名、AI API Key）通过环境变量注入，不入库
 - Docker Compose 统一管理容器网络，MySQL/Redis 不暴露公网端口
 - 定时任务：神评检查、推荐模型更新、热门帖子刷新
 
@@ -674,6 +674,7 @@ Production:
 | **AI 服务不可用** | 中 | 高 | 异步调用 + 重试机制（2 次），前端显示友好错误 + 重试按钮，503 状态码降级 |
 | **推荐冷启动** | 高 | 中 | 默认降级为热门帖子排行，新用户展示热门内容引导互动，积累数据后切换个性化推荐 |
 | **雪花 ID 时钟回拨** | 低 | 高 | 服务器 NTP 时间同步，MyBatis-Plus ASSIGN_ID 内置容错，极端情况回退 UUID |
+| **CORS 白名单通配** | 低 | 严重 | 禁止 `allowedOriginPatterns("*")`，CORS 白名单通过环境变量 `CORS_ORIGINS` 注入；`WebMvcConfig` 使用 `allowedOrigins(精确列表)` + `allowCredentials(true)`；生产缺失 `CORS_ORIGINS` 即 fail-fast |
 | **大文件上传性能** | 中 | 低 | 前端限制 5MB + 格式白名单，Nginx `client_max_body_size` 限制，后续可扩展分片上传 |
 | **JWT Secret 泄露** | 低 | 严重 | Secret 仅通过环境变量注入 `JWT_SECRET`，配置与代码均**无默认回退**，缺失即 fail-fast 拒绝启动；不写入配置文件或仓库；建立定期轮换机制 |
 | **XSS via Markdown** | 中 | 高 | `markdown-it` 禁用原始 HTML + DOMPurify 白名单清洗，服务端可增加二次清洗 |

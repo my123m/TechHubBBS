@@ -1,0 +1,5 @@
+{
+  "slide": {
+    "content": "<slide xmlns=\"http://www.larkoffice.com/sml/2.0\"><style><fill><fillColor color=\"linear-gradient(135deg,rgba(13,17,23,1) 0%,rgba(22,27,34,1) 50%,rgba(13,17,23,1) 100%)\"/></fill></style><data><shape type=\"rect\" topLeftX=\"0\" topLeftY=\"0\" width=\"380\" height=\"540\"><fill><fillColor color=\"linear-gradient(180deg,rgba(56,139,253,0.25) 0%,rgba(13,17,23,0.9) 100%)\"/></fill></shape><shape type=\"text\" topLeftX=\"80\" topLeftY=\"180\" width=\"800\" height=\"80\"><content textType=\"title\" fontSize=\"52\" color=\"rgb(88,166,255)\" bold=\"true\"><p>感谢聆听</p></content></shape><shape type=\"text\" topLeftX=\"80\" topLeftY=\"280\" width=\"800\" height=\"50\"><content textType=\"headline\" fontSize=\"24\" color=\"rgb(230,237,243)\"><p>TechHub — 为技术爱好者打造的社区论坛</p></content></shape><shape type=\"text\" topLeftX=\"80\" topLeftY=\"360\" width=\"800\" height=\"60\"><content textType=\"body\" fontSize=\"16\" color=\"rgb(139,148,158)\" lineSpacing=\"multiple:1.6\"><p>Spring Boot 3.5 + Vue 3 + MyBatis-Plus + MySQL 8.0 + Redis 7</p><p>前后端分离 · AI 辅助 · 神评机制 · 安全可靠</p></content></shape></data></slide>"
+  }
+}

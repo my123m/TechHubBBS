@@ -17,7 +17,7 @@ const categories = ref<Category[]>([])
 const dialogVisible = ref(false)
 const dialogLoading = ref(false)
 const isEdit = ref(false)
-const editingId = ref<number | null>(null)
+const editingId = ref<string | null>(null)
 const formRef = ref<FormInstance>()
 
 interface CategoryForm {
@@ -43,7 +43,7 @@ const rules: FormRules = {
 }
 
 // ---- Toggle loading ----
-const loadingIds = ref(new Set<number>())
+const loadingIds = ref(new Set<string>())
 
 // ---- Fetch ----
 async function fetchCategories() {

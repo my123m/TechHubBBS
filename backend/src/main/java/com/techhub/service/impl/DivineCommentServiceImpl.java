@@ -17,6 +17,7 @@ import com.techhub.mapper.UserMapper;
 import com.techhub.security.SecurityUtils;
 import com.techhub.service.DivineCommentService;
 import com.techhub.service.NotificationService;
+import com.techhub.service.PostVisibilityService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -36,6 +37,7 @@ public class DivineCommentServiceImpl implements DivineCommentService {
     private final PostMapper postMapper;
     private final UserMapper userMapper;
     private final NotificationService notificationService;
+    private final PostVisibilityService postVisibilityService;
 
     @Override
     @Transactional
@@ -145,6 +147,13 @@ public class DivineCommentServiceImpl implements DivineCommentService {
 
     @Override
     public List<CommentVO> listDivineComments(Long postId) {
+        Long currentUserId = SecurityUtils.getCurrentUserId();
+        Post post = postMapper.selectById(postId);
+        if (post == null) {
+            throw new BusinessException(ResultCode.NOT_FOUND, "帖子不存在");
+        }
+        postVisibilityService.checkVisibleOrThrow(post, currentUserId, isAdmin());
+
         List<Comment> comments = commentMapper.selectList(
                 new LambdaQueryWrapper<Comment>()
                         .eq(Comment::getPostId, postId)
@@ -208,5 +217,10 @@ public class DivineCommentServiceImpl implements DivineCommentService {
             vo.setAvatarUrl(author.getAvatarUrl());
         }
         return vo;
+    }
+
+    private boolean isAdmin() {
+        String role = SecurityUtils.getCurrentRole();
+        return "ADMIN".equals(role);
     }
 }

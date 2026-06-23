@@ -18,6 +18,7 @@ import com.techhub.security.SecurityUtils;
 import com.techhub.service.DivineCommentService;
 import com.techhub.service.InteractionService;
 import com.techhub.service.NotificationService;
+import com.techhub.service.PostVisibilityService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DuplicateKeyException;
@@ -35,6 +36,7 @@ public class InteractionServiceImpl implements InteractionService {
     private final CommentMapper commentMapper;
     private final DivineCommentService divineCommentService;
     private final NotificationService notificationService;
+    private final PostVisibilityService postVisibilityService;
 
     // ==================== 帖子点赞 ====================
 
@@ -50,6 +52,7 @@ public class InteractionServiceImpl implements InteractionService {
         if (post == null) {
             throw new BusinessException(ResultCode.NOT_FOUND, "帖子不存在");
         }
+        postVisibilityService.checkVisibleOrThrow(post, userId, isAdmin());
 
         UserLike userLike = new UserLike();
         userLike.setUserId(userId);
@@ -83,6 +86,12 @@ public class InteractionServiceImpl implements InteractionService {
             throw new BusinessException(ResultCode.UNAUTHORIZED, "请先登录");
         }
 
+        Post post = postMapper.selectById(postId);
+        if (post == null) {
+            throw new BusinessException(ResultCode.NOT_FOUND, "帖子不存在");
+        }
+        postVisibilityService.checkVisibleOrThrow(post, userId, isAdmin());
+
         LambdaQueryWrapper<UserLike> wrapper = new LambdaQueryWrapper<UserLike>()
                 .eq(UserLike::getUserId, userId)
                 .eq(UserLike::getTargetType, "POST")
@@ -113,6 +122,7 @@ public class InteractionServiceImpl implements InteractionService {
         if (post == null) {
             throw new BusinessException(ResultCode.NOT_FOUND, "帖子不存在");
         }
+        postVisibilityService.checkVisibleOrThrow(post, userId, isAdmin());
 
         Favorite favorite = new Favorite();
         favorite.setUserId(userId);
@@ -131,6 +141,12 @@ public class InteractionServiceImpl implements InteractionService {
         if (userId == null) {
             throw new BusinessException(ResultCode.UNAUTHORIZED, "请先登录");
         }
+
+        Post post = postMapper.selectById(postId);
+        if (post == null) {
+            throw new BusinessException(ResultCode.NOT_FOUND, "帖子不存在");
+        }
+        postVisibilityService.checkVisibleOrThrow(post, userId, isAdmin());
 
         LambdaQueryWrapper<Favorite> wrapper = new LambdaQueryWrapper<Favorite>()
                 .eq(Favorite::getUserId, userId)
@@ -153,6 +169,12 @@ public class InteractionServiceImpl implements InteractionService {
         if (comment == null) {
             throw new BusinessException(ResultCode.NOT_FOUND, "评论不存在");
         }
+
+        Post post = postMapper.selectById(comment.getPostId());
+        if (post == null) {
+            throw new BusinessException(ResultCode.NOT_FOUND, "帖子不存在");
+        }
+        postVisibilityService.checkVisibleOrThrow(post, userId, isAdmin());
 
         UserLike userLike = new UserLike();
         userLike.setUserId(userId);
@@ -188,6 +210,17 @@ public class InteractionServiceImpl implements InteractionService {
             throw new BusinessException(ResultCode.UNAUTHORIZED, "请先登录");
         }
 
+        Comment comment = commentMapper.selectById(commentId);
+        if (comment == null) {
+            throw new BusinessException(ResultCode.NOT_FOUND, "评论不存在");
+        }
+
+        Post post = postMapper.selectById(comment.getPostId());
+        if (post == null) {
+            throw new BusinessException(ResultCode.NOT_FOUND, "帖子不存在");
+        }
+        postVisibilityService.checkVisibleOrThrow(post, userId, isAdmin());
+
         LambdaQueryWrapper<UserLike> wrapper = new LambdaQueryWrapper<UserLike>()
                 .eq(UserLike::getUserId, userId)
                 .eq(UserLike::getTargetType, "COMMENT")
@@ -206,5 +239,10 @@ public class InteractionServiceImpl implements InteractionService {
             }
         }
         // 幂等：不存在时不抛异常
+    }
+
+    private boolean isAdmin() {
+        String role = SecurityUtils.getCurrentRole();
+        return "ADMIN".equals(role);
     }
 }

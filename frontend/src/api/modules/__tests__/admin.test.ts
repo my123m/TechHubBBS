@@ -46,9 +46,9 @@ describe('adminApi', () => {
   // ---- Posts ----
 
   it('getPosts calls GET /admin/posts with query', () => {
-    adminApi.getPosts({ page: 1, size: 20, keyword: 'hello', categoryId: 2 })
+    adminApi.getPosts({ page: 1, size: 20, keyword: 'hello', categoryId: '2' })
     expect(api).toHaveBeenCalledWith('/admin/posts', {
-      query: { page: 1, size: 20, keyword: 'hello', categoryId: 2 },
+      query: { page: 1, size: 20, keyword: 'hello', categoryId: '2' },
     })
   })
 

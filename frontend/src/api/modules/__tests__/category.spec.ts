@@ -47,7 +47,7 @@ describe('categoryApi', () => {
       const mockResponse: R<Category> = { code: 200, message: 'ok', data: {} as Category }
       mockApi.mockResolvedValue(mockResponse)
 
-      const result = await categoryApi.update(1, body)
+      const result = await categoryApi.update('1', body)
       expect(mockApi).toHaveBeenCalledWith('/admin/categories/1', { method: 'PATCH', body })
       expect(result).toEqual(mockResponse)
     })
@@ -56,7 +56,7 @@ describe('categoryApi', () => {
       const mockResponse: R<null> = { code: 200, message: 'ok', data: null }
       mockApi.mockResolvedValue(mockResponse)
 
-      const result = await categoryApi.toggleStatus(1, 0)
+      const result = await categoryApi.toggleStatus('1', 0)
       expect(mockApi).toHaveBeenCalledWith('/admin/categories/1/status', { method: 'PATCH', body: { status: 0 } })
       expect(result).toEqual(mockResponse)
     })
@@ -65,7 +65,7 @@ describe('categoryApi', () => {
       const mockResponse: R<null> = { code: 200, message: 'ok', data: null }
       mockApi.mockResolvedValue(mockResponse)
 
-      const result = await categoryApi.delete(1)
+      const result = await categoryApi.delete('1')
       expect(mockApi).toHaveBeenCalledWith('/admin/categories/1', { method: 'DELETE' })
       expect(result).toEqual(mockResponse)
     })

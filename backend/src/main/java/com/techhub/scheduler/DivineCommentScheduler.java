@@ -14,7 +14,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Component
@@ -97,5 +99,52 @@ public class DivineCommentScheduler {
                 .gt(Post::getDivineCommentCount, 0)
                 .setSql("divine_comment_count = divine_comment_count - 1"));
         log.debug("DivineCommentScheduler: 评论 {} 撤销神评", comment.getId());
+    }
+
+    // ponytail: 每小时对账一次，修正因删除评论等路径导致的 divineCommentCount 漂移。
+    // 覆盖两种场景：1) 帖子有 is_divine=1 评论但计数为 0；2) 计数 > 0 但无实际神评评论。
+    @Scheduled(fixedRate = 3600000)
+    @Transactional
+    public void reconcileDivineCounts() {
+        log.info("DivineCommentScheduler: 开始对账神评计数...");
+
+        List<Comment> allDivine = commentMapper.selectList(
+                new LambdaQueryWrapper<Comment>().eq(Comment::getIsDivine, 1));
+
+        Map<Long, Integer> actualCountMap = new HashMap<>();
+        for (Comment c : allDivine) {
+            actualCountMap.merge(c.getPostId(), 1, Integer::sum);
+        }
+
+        // 场景 1：有实际神评评论，但帖子计数不匹配
+        int corrected = 0;
+        for (Map.Entry<Long, Integer> entry : actualCountMap.entrySet()) {
+            Post post = postMapper.selectById(entry.getKey());
+            if (post != null) {
+                int stored = post.getDivineCommentCount() == null ? 0 : post.getDivineCommentCount();
+                if (stored != entry.getValue()) {
+                    post.setDivineCommentCount(entry.getValue());
+                    postMapper.updateById(post);
+                    corrected++;
+                    log.warn("DivineCommentScheduler: 对账修正 postId={}, {} -> {}", post.getId(), stored, entry.getValue());
+                }
+            }
+        }
+
+        // 场景 2：帖子计数 > 0 但无实际神评评论（场景 1 已处理的帖子会被二次命中，但 stored==0 匹配不会重复修正）
+        List<Post> nonZeroPosts = postMapper.selectList(
+                new LambdaQueryWrapper<Post>().gt(Post::getDivineCommentCount, 0));
+        for (Post post : nonZeroPosts) {
+            int actual = actualCountMap.getOrDefault(post.getId(), 0);
+            int stored = post.getDivineCommentCount() == null ? 0 : post.getDivineCommentCount();
+            if (stored != actual) {
+                post.setDivineCommentCount(actual);
+                postMapper.updateById(post);
+                corrected++;
+                log.warn("DivineCommentScheduler: 对账修正 postId={}, {} -> {}", post.getId(), stored, actual);
+            }
+        }
+
+        log.info("DivineCommentScheduler: 对账完成，修正 {} 个帖子", corrected);
     }
 }

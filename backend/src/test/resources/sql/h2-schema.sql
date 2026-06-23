@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS "user" (
     "id"          BIGINT       NOT NULL,
     "username"    VARCHAR(50)  NOT NULL,
     "password"    VARCHAR(255) NOT NULL,
-    "email"       VARCHAR(100) NOT NULL,
+    "email"       VARCHAR(100) DEFAULT NULL,
     "avatar_url"  VARCHAR(500) DEFAULT NULL,
     "bio"         VARCHAR(500) DEFAULT NULL,
     "role"        VARCHAR(20)  NOT NULL DEFAULT 'USER',

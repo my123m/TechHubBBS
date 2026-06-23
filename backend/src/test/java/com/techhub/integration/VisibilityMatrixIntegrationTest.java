@@ -500,4 +500,83 @@ class VisibilityMatrixIntegrationTest extends BaseIntegrationTest {
                 .andExpect(jsonPath("$.data.pages").value(3))
                 .andExpect(jsonPath("$.data.records", hasSize(10)));
     }
+
+    // ==================== 交互可见性 ====================
+
+    @Nested
+    @DisplayName("InteractionVisibility — like/favorite 可见性校验")
+    class InteractionVisibility {
+
+        @Test
+        @DisplayName("陌生人点赞私密帖子 → 404")
+        void likePrivatePost_Stranger_Returns404() throws Exception {
+            String postId = createPost(3); // PRIVATE
+            mockMvc.perform(post("/api/v1/posts/{id}/likes", postId)
+                            .header("Authorization", bearerToken(strangerToken)))
+                    .andExpect(status().isNotFound());
+        }
+
+        @Test
+        @DisplayName("陌生人收藏私密帖子 → 404")
+        void favoritePrivatePost_Stranger_Returns404() throws Exception {
+            String postId = createPost(3); // PRIVATE
+            mockMvc.perform(post("/api/v1/posts/{id}/favorites", postId)
+                            .header("Authorization", bearerToken(strangerToken)))
+                    .andExpect(status().isNotFound());
+        }
+
+        @Test
+        @DisplayName("陌生人点赞登录可见帖子 → 200")
+        void likeLoginOnlyPost_Stranger_Returns200() throws Exception {
+            String postId = createPost(1); // LOGIN_ONLY
+            mockMvc.perform(post("/api/v1/posts/{id}/likes", postId)
+                            .header("Authorization", bearerToken(strangerToken)))
+                    .andExpect(status().isOk());
+        }
+
+        @Test
+        @DisplayName("陌生人收藏登录可见帖子 → 200")
+        void favoriteLoginOnlyPost_Stranger_Returns200() throws Exception {
+            String postId = createPost(1); // LOGIN_ONLY
+            mockMvc.perform(post("/api/v1/posts/{id}/favorites", postId)
+                            .header("Authorization", bearerToken(strangerToken)))
+                    .andExpect(status().isOk());
+        }
+
+        @Test
+        @DisplayName("作者点赞自己的私密帖子 → 200")
+        void likePrivatePost_Author_Returns200() throws Exception {
+            String postId = createPost(3); // PRIVATE
+            mockMvc.perform(post("/api/v1/posts/{id}/likes", postId)
+                            .header("Authorization", bearerToken(authorToken)))
+                    .andExpect(status().isOk());
+        }
+
+        @Test
+        @DisplayName("作者收藏自己的私密帖子 → 200")
+        void favoritePrivatePost_Author_Returns200() throws Exception {
+            String postId = createPost(3); // PRIVATE
+            mockMvc.perform(post("/api/v1/posts/{id}/favorites", postId)
+                            .header("Authorization", bearerToken(authorToken)))
+                    .andExpect(status().isOk());
+        }
+
+        @Test
+        @DisplayName("管理员点赞私密帖子 → 200")
+        void likePrivatePost_Admin_Returns200() throws Exception {
+            String postId = createPost(3); // PRIVATE
+            mockMvc.perform(post("/api/v1/posts/{id}/likes", postId)
+                            .header("Authorization", bearerToken(adminToken)))
+                    .andExpect(status().isOk());
+        }
+
+        @Test
+        @DisplayName("粉丝点赞粉丝可见帖子 → 200")
+        void likeFollowersOnlyPost_Follower_Returns200() throws Exception {
+            String postId = createPost(2); // FOLLOWERS_ONLY
+            mockMvc.perform(post("/api/v1/posts/{id}/likes", postId)
+                            .header("Authorization", bearerToken(followerToken)))
+                    .andExpect(status().isOk());
+        }
+    }
 }

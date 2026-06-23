@@ -163,6 +163,22 @@ const mockDivineComments: CommentVO[] = [
     createTime: '2025-06-01T11:00:00',
     children: [],
   },
+  {
+    id: 'dc2',
+    postId: '1',
+    userId: '30',
+    username: 'user2',
+    avatarUrl: '',
+    content: '这是第二条神评内容',
+    parentId: null,
+    replyToUserId: null,
+    likeCount: 15,
+    recommendCount: 8,
+    isDivine: true,
+    liked: false,
+    createTime: '2025-06-01T12:00:00',
+    children: [],
+  },
 ]
 
 const mockComments: CommentVO[] = [
@@ -374,6 +390,7 @@ describe('PostDetailPage', () => {
       mockPostApi.getDetail.mockResolvedValue({
         data: { ...mockPost, divineCommentCount: 0 },
       })
+      mockCommentApi.getDivineComments.mockResolvedValue({ data: [] })
       const { wrapper } = await mountPage()
       expect(wrapper.find('.post-detail__stat--divine').exists()).toBe(false)
     })
@@ -658,12 +675,13 @@ describe('PostDetailPage', () => {
       expect(mockCommentApi.getDivineComments).toHaveBeenCalledWith('1')
     })
 
-    it('skips divine comments fetch when divineCommentCount is 0', async () => {
+    it('hides divine section when API returns empty list', async () => {
       mockPostApi.getDetail.mockResolvedValue({
         data: { ...mockPost, divineCommentCount: 0 },
       })
-      await mountPage()
-      expect(mockCommentApi.getDivineComments).not.toHaveBeenCalled()
+      mockCommentApi.getDivineComments.mockResolvedValue({ data: [] })
+      const { wrapper } = await mountPage()
+      expect(wrapper.find('.post-detail__divine').exists()).toBe(false)
     })
 
     it('handles API failure gracefully (shows error state)', async () => {

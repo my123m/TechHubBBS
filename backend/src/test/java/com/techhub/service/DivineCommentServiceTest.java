@@ -43,6 +43,7 @@ class DivineCommentServiceTest {
     @Mock private CommentRecommendMapper commentRecommendMapper;
     @Mock private PostMapper postMapper;
     @Mock private UserMapper userMapper;
+    @Mock private PostVisibilityService postVisibilityService;
 
     @InjectMocks
     private DivineCommentServiceImpl divineCommentService;
@@ -251,6 +252,7 @@ class DivineCommentServiceTest {
             Comment d2 = createComment(102L, POST_ID, 12, 6, 1);
             d2.setDivineTime(LocalDateTime.now());
             when(commentMapper.selectList(any(LambdaQueryWrapper.class))).thenReturn(List.of(d2, d1));
+            when(postMapper.selectById(POST_ID)).thenReturn(createPost(POST_ID, 15));
             when(userMapper.selectById(USER_ID)).thenReturn(createUser(USER_ID, LocalDateTime.now().minusDays(30)));
 
             List<CommentVO> result = divineCommentService.listDivineComments(POST_ID);
@@ -260,6 +262,7 @@ class DivineCommentServiceTest {
         @Test @DisplayName("无神评 -> 空列表")
         void empty() {
             when(commentMapper.selectList(any(LambdaQueryWrapper.class))).thenReturn(List.of());
+            when(postMapper.selectById(POST_ID)).thenReturn(createPost(POST_ID, 15));
             assertTrue(divineCommentService.listDivineComments(POST_ID).isEmpty());
         }
     }

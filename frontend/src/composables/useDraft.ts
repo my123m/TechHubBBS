@@ -5,7 +5,7 @@ import type { PostDraft } from '@/api/types/draft'
 interface DraftData {
   title?: string
   content?: string
-  categoryId?: number
+  categoryId?: string
   visibility?: number
   postId?: string
 }

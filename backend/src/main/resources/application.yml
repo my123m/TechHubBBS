@@ -76,6 +76,10 @@ jwt:
   secret: ${JWT_SECRET}
   expiration: 86400000  # 24 小时 (毫秒)
 
+# ==================== CORS 配置 ====================
+cors:
+  allowed-origins: http://localhost:5173
+
 # ==================== AI 服务配置 ====================
 ai:
   provider: ${AI_PROVIDER:openai}            # openai / custom

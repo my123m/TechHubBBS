@@ -1,5 +1,7 @@
 package com.techhub.config;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -19,10 +21,13 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Value("${UPLOAD_PATH:/home/Lsk/Documents/Code/Projects/TechHubBBS/backend/uploads/}")
     private String uploadPath;
 
+    @Value("${cors.allowed-origins}")
+    private List<String> allowedOrigins;
+
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/api/**")
-                .allowedOriginPatterns("*")
+                .allowedOrigins(allowedOrigins.toArray(new String[0]))
                 .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
                 .allowCredentials(true);

@@ -138,6 +138,23 @@ class AuthControllerTest {
                 .andExpect(jsonPath("$.message").value(org.hamcrest.Matchers.containsString("邮箱格式不正确")));
     }
 
+    @Test
+    @DisplayName("register — 邮箱为空时注册成功")
+    void register_NoEmail_Returns200() throws Exception {
+        RegisterRequest request = new RegisterRequest();
+        request.setUsername("noemailuser");
+        request.setPassword("password123");
+
+        doNothing().when(authService).register(any(RegisterRequest.class));
+
+        mockMvc.perform(post("/api/v1/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(200))
+                .andExpect(jsonPath("$.message").value("注册成功"));
+    }
+
     // ==================== Login Tests ====================
 
     @Test

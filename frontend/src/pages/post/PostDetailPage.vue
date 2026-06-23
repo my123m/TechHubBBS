@@ -110,11 +110,13 @@ async function fetchPost() {
 // Section 4: Divine comments
 // ---------------------------------------------------------------------------
 async function fetchDivineComments() {
-  if (!post.value || post.value.divineCommentCount === 0) return
+  if (!post.value) return
   divineLoading.value = true
   try {
     const res = await commentApi.getDivineComments(postId.value)
     divineComments.value = res.data ?? []
+    // ponytail: 以实际列表长度为准，修正后端可能滞后的 divineCommentCount
+    post.value.divineCommentCount = divineComments.value.length
   } catch {
     divineComments.value = []
   } finally {

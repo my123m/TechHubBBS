@@ -21,7 +21,7 @@ const categories = ref<Category[]>([])
 const form = reactive({
   title: '',
   content: '',
-  categoryId: undefined as number | undefined,
+  categoryId: undefined as string | undefined,
   visibility: 0 as PostVisibility,
 })
 

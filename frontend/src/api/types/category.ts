@@ -1,8 +1,8 @@
 /**
- * Category (id is number — backend Long serialised as-is)
+ * Category (id is string — backend Long serialised as string via JacksonConfig)
  */
 export interface Category {
-  id: number
+  id: string
   name: string
   description: string
   sortOrder: number

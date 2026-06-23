@@ -16,7 +16,7 @@ const userStore = useUserStore()
 
 // ── Filters ──
 const keyword = ref('')
-const selectedCategoryId = ref<number | ''>('')
+const selectedCategoryId = ref<string | ''>('')
 
 // ── Categories ──
 const categories = ref<Category[]>([])

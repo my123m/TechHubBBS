@@ -10,7 +10,7 @@ CREATE TABLE [user] (
     [id]          BIGINT          NOT NULL,
     [username]    NVARCHAR(50)    NOT NULL,
     [password]    NVARCHAR(255)   NOT NULL,
-    [email]       NVARCHAR(100)   NOT NULL,
+    [email]       NVARCHAR(100)   NULL,
     [avatar_url]  NVARCHAR(500)   NULL,
     [bio]         NVARCHAR(500)   NULL,
     [role]        NVARCHAR(20)    NOT NULL DEFAULT 'USER',

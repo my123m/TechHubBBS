@@ -236,7 +236,7 @@ describe('useDraft', () => {
           id: 'draft-restore',
           title: 'Restored Title',
           content: 'Restored Content',
-          categoryId: 1,
+          categoryId: '1',
           visibility: 2,
           postId: 'post-456',
           lastSavedAt: '',
@@ -253,7 +253,7 @@ describe('useDraft', () => {
       expect(draftApi.getDetail).toHaveBeenCalledWith('draft-restore')
       expect(draftData.value.title).toBe('Restored Title')
       expect(draftData.value.content).toBe('Restored Content')
-      expect(draftData.value.categoryId).toBe(1)
+      expect(draftData.value.categoryId).toBe('1')
       expect(draftData.value.visibility).toBe(2)
       expect(draftData.value.postId).toBe('post-456')
       expect(currentDraftId.value).toBe('draft-restore')

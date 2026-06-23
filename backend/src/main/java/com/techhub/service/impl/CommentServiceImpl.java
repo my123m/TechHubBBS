@@ -12,7 +12,6 @@ import com.techhub.entity.Comment;
 import com.techhub.entity.Post;
 import com.techhub.entity.User;
 import com.techhub.enums.PostStatusEnum;
-import com.techhub.enums.RoleEnum;
 import com.techhub.mapper.CommentMapper;
 import com.techhub.mapper.PostMapper;
 import com.techhub.mapper.UserLikeMapper;
@@ -145,6 +144,14 @@ public class CommentServiceImpl implements CommentService {
                 .eq(Post::getId, comment.getPostId())
                 .gt(Post::getCommentCount, 0)
                 .setSql("comment_count = comment_count - 1"));
+
+        // 若被删评论为神评，同步递减神评计数（原子更新）
+        if (comment.getIsDivine() != null && comment.getIsDivine() == 1) {
+            postMapper.update(null, new LambdaUpdateWrapper<Post>()
+                    .eq(Post::getId, comment.getPostId())
+                    .gt(Post::getDivineCommentCount, 0)
+                    .setSql("divine_comment_count = divine_comment_count - 1"));
+        }
     }
 
     // --- 私有辅助方法 -------------------------------------------------------
@@ -189,7 +196,7 @@ public class CommentServiceImpl implements CommentService {
      */
     private boolean isAdmin() {
         String role = SecurityUtils.getCurrentRole();
-        return RoleEnum.ADMIN.getCode().equals(role);
+        return "ADMIN".equals(role);
     }
 
     /**
@@ -197,6 +204,6 @@ public class CommentServiceImpl implements CommentService {
      */
     private boolean isAdminOrModerator() {
         String role = SecurityUtils.getCurrentRole();
-        return RoleEnum.ADMIN.getCode().equals(role) || RoleEnum.MODERATOR.getCode().equals(role);
+        return "ADMIN".equals(role) || "MODERATOR".equals(role);
     }
 }

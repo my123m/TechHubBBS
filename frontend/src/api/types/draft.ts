@@ -6,7 +6,7 @@ export interface PostDraft {
   postId?: string
   title?: string
   content?: string
-  categoryId?: number
+  categoryId?: string
   categoryName?: string
   visibility?: number
   lastSavedAt: string
@@ -20,7 +20,7 @@ export interface PostDraft {
 export interface DraftSaveRequest {
   title?: string
   content?: string
-  categoryId?: number
+  categoryId?: string
   visibility?: number
   postId?: string
 }

@@ -45,7 +45,7 @@ export interface PostListParams {
   page?: number
   size?: number
   keyword?: string
-  categoryId?: number
+  categoryId?: string
   sort?: string
   userId?: string
 }
@@ -56,7 +56,7 @@ export interface PostListParams {
 export interface PostCreateRequest {
   title: string
   content: string
-  categoryId: number
+  categoryId: string
   visibility: PostVisibility
   draftPostId?: string
 }
@@ -67,7 +67,7 @@ export interface PostCreateRequest {
 export interface PostUpdateRequest {
   title?: string
   content?: string
-  categoryId?: number
+  categoryId?: string
   visibility?: PostVisibility
 }
 

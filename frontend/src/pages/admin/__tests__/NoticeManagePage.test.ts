@@ -70,7 +70,7 @@ function makeNoticeVO(overrides: Partial<CategoryNoticeVO> = {}): CategoryNotice
 
 function makeCategory(overrides: Partial<Category> = {}): Category {
   return {
-    id: overrides.id ?? 10,
+    id: overrides.id ?? '10',
     name: overrides.name ?? 'Java',
     description: '',
     sortOrder: 1,
@@ -156,7 +156,7 @@ describe('NoticeManagePage', () => {
     mockNoticeUpdate.mockReset()
     mockNoticeDelete.mockReset()
 
-    mockGetCategories.mockResolvedValue({ data: [makeCategory(), makeCategory({ id: 20, name: 'Python' })] })
+    mockGetCategories.mockResolvedValue({ data: [makeCategory(), makeCategory({ id: '20', name: 'Python' })] })
     mockGetNotices.mockResolvedValue(makePageResult([]))
   })
 

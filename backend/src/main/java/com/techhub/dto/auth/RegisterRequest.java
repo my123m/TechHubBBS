@@ -13,7 +13,6 @@ public class RegisterRequest {
     @NotBlank(message = "密码不能为空")
     @Size(min = 6, max = 100, message = "密码长度需在6-100个字符之间")
     private String password;
-    @NotBlank(message = "邮箱不能为空")
     @Email(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", message = "邮箱格式不正确")
     private String email;
 }

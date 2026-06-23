@@ -43,7 +43,7 @@ export const adminApi = {
   // ---------------------------------------------------------------------------
 
   /** Get paginated post list (admin sees all, regardless of visibility) */
-  getPosts: (params: { page?: number; size?: number; keyword?: string; categoryId?: number }) =>
+  getPosts: (params: { page?: number; size?: number; keyword?: string; categoryId?: string }) =>
     api<R<PageResult<PostVO>>>('/admin/posts', { query: params }),
 
   /** Set post type (e.g. normal, pinned, essence) */

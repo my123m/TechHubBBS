@@ -73,7 +73,7 @@ INSERT INTO `category_notice` (`id`, `category_id`, `title`, `content`, `type`, 
 INSERT INTO `post` (`id`, `title`, `content`, `category_id`, `author_id`, `type`, `status`, `visibility`, `view_count`, `like_count`, `comment_count`, `divine_comment_count`, `eligible_for_divine`, `create_time`, `update_time`, `deleted`) VALUES
 (30, 'Spring Boot 3.5 最佳实践总结',
  '## 前言\n\nSpring Boot 3.5 带来了许多令人兴奋的特性，我在最近的项目迁移中总结了一些最佳实践，分享给大家。\n\n## 1. 使用虚拟线程\n\n```java\n// application.yml\nspring:\n  threads:\n    virtual:\n      enabled: true\n```\n\n虚拟线程（Project Loom）在 I/O 密集型场景下性能提升显著。\n\n> 注意：虚拟线程不适合 CPU 密集型任务，此时应使用传统平台线程。\n\n## 2. 结构化日志\n\n```java\n@Slf4j\npublic class OrderService {\n    public void createOrder(OrderDTO dto) {\n        log.atInfo()\n            .addKeyValue(\"userId\", dto.getUserId())\n            .addKeyValue(\"amount\", dto.getAmount())\n            .log(\"创建订单\");\n    }\n}\n```\n\n结构化日志配合 ELK 或 Loki 可以极大提升问题排查效率。\n\n## 3. 优雅的异常处理\n\n```java\n@RestControllerAdvice\npublic class GlobalExceptionHandler {\n    @ExceptionHandler(BusinessException.class)\n    public R<Void> handleBusiness(BusinessException e) {\n        log.warn(\"业务异常: {}\", e.getMessage());\n        return R.error(e.getCode(), e.getMessage());\n    }\n}\n```\n\n## 4. 分层架构实践\n\n- **Controller**: 只做参数校验和路由\n- **Service**: 业务逻辑 + 事务\n- **Mapper**: 数据访问（MyBatis-Plus）\n- **Entity/DTO**: 数据模型分离\n\n## 总结\n\nSpring Boot 3.5 的升级过程相对平滑，建议大家在迁移时先从非核心服务开始，逐步推进。',
- 10, 1, 1, 1, 0, 128, 15, 4, 0, 0, '2026-02-01 10:00:00', '2026-02-10 15:30:00', 0),
+ 10, 1, 1, 1, 0, 128, 15, 4, 1, 0, '2026-02-01 10:00:00', '2026-02-10 15:30:00', 0),
 
 (31, 'Vue 3 Composition API 实战指南',
  '## 为什么选择 Composition API？\n\nComposition API 解决了 Options API 在复杂组件中的逻辑复用难题。\n\n## 基础用法\n\n```vue\n<script setup lang=\"ts\">\nimport { ref, computed, onMounted } from ''vue''\n\nconst count = ref(0)\nconst double = computed(() => count.value * 2)\n\nfunction increment() {\n  count.value++\n}\n\nonMounted(() => {\n  console.log(''组件已挂载'')\n})\n</script>\n```\n\n## 自定义 Hook\n\n```typescript\n// useCounter.ts\nimport { ref } from ''vue''\n\nexport function useCounter(initialValue = 0) {\n  const count = ref(initialValue)\n  const increment = () => count.value++\n  const decrement = () => count.value--\n  \n  return { count, increment, decrement }\n}\n```\n\n## 与 TypeScript 结合\n\n```typescript\ninterface User {\n  id: number\n  name: string\n  email: string\n}\n\nconst user = ref<User | null>(null)\n```\n\n## 常见陷阱\n\n1. **响应式丢失**：解构 `reactive` 对象会导致响应式丢失，应使用 `toRefs`\n2. **watch 的深度监听**：监听 `reactive` 对象默认开启深度监听\n3. **组件通信**：推荐使用 `provide/inject` 替代多层 props 透传\n\n## 推荐组合\n\n- 状态管理：Pinia\n- 路由：Vue Router 4\n- HTTP：ofetch 或 axios\n\n希望这篇指南对大家有帮助！',
@@ -90,7 +90,7 @@ INSERT INTO `post` (`id`, `title`, `content`, `category_id`, `author_id`, `type`
 -- 问答求助
 (34, 'MySQL 联合索引最左前缀原则求助',
  '## 问题\n\n我有一个 `user` 表，建立了联合索引 `idx_a_b_c(a, b, c)`，以下查询是否能用到索引？\n\n```sql\nSELECT * FROM user WHERE b = 1 AND c = 2;\nSELECT * FROM user WHERE a = 1 AND c = 2;\nSELECT * FROM user WHERE a = 1 ORDER BY c;\n```\n\n## 我的理解\n1. 第一个查询：没用，因为跳过了 a\n2. 第二个查询：只用到了 a 部分的索引\n3. 第三个查询：可以用到索引，但 ORDER BY c 时由于跳过了 b，可能走 filesort\n\n请问我的理解对吗？恳请大佬指点！',
- 11, 3, 0, 1, 0, 95, 12, 4, 0, 0, '2026-03-10 11:00:00', '2026-03-10 11:00:00', 0),
+ 11, 3, 0, 1, 0, 95, 12, 4, 1, 0, '2026-03-10 11:00:00', '2026-03-10 11:00:00', 0),
 
 (35, 'JWT Token 刷新机制的最佳实践',
  '## 背景\n\n我正在开发一个前后端分离的项目，JWT Token 有效期设置为 24 小时。现在需要实现 Token 自动刷新功能，但不确定哪种方案更好。\n\n## 方案一：双 Token 方案\n- Access Token（短期，15 分钟）+ Refresh Token（长期，7 天）\n- Refresh Token 存储在数据库中，可以撤销\n\n## 方案二：单 Token + 刷新接口\n- Access Token 有效期 2 小时\n- 在 Token 过期前调用刷新接口获取新 Token\n- 使用 Redis 黑名单机制让旧 Token 失效\n\n## 方案三：无刷新方案\n- Token 有效期 24 小时\n- 过期后重新登录\n\n## 我的疑问\n1. 大家的生产项目中用哪种方案比较多？\n2. Refresh Token 需要存储吗？还是可以用签名验证？\n3. 并发场景下 Token 刷新竞态问题怎么处理？',
@@ -107,7 +107,7 @@ INSERT INTO `post` (`id`, `title`, `content`, `category_id`, `author_id`, `type`
 -- 项目展示
 (38, 'TechHub 技术社区论坛 —— 全栈开源项目',
  '## 项目简介\n\nTechHub 是一个前后端分离的轻量级技术社区论坛，涵盖了用户认证、内容管理、互动系统、个性化推荐、AI 总结等完整功能。\n\n## 技术栈\n\n| 层级 | 技术 |\n|------|------|\n| 前端 | Vue 3 + TypeScript + Vite + Element Plus |\n| 后端 | Spring Boot 3.5 + MyBatis-Plus + Spring Security |\n| 数据库 | MySQL 8.0 + Redis 7 |\n| 部署 | Docker + Docker Compose |\n\n## 核心功能\n\n- ✅ 用户注册登录（JWT + BCrypt）\n- ✅ 帖子 CRUD（四级可见权限）\n- ✅ 回复与神评机制\n- ✅ 点赞 / 收藏 / 关注\n- ✅ 通知系统\n- ✅ AI 总结与问答\n- ✅ 个性化推荐系统\n- ✅ 草稿自动保存\n- ✅ 管理后台\n\n## 项目截图\n\n> （稍后补充截图）\n\n## 项目地址\n\n[GitHub Repository](https://github.com/techhub/techhub-community)\n\n## 开发心得\n\n这个项目是我用来整合 Spring Boot 和 Vue 3 所学知识的实践项目，过程中遇到了不少挑战：\n\n1. **雪花 ID 精度问题**：前端 JS 无法精确处理 19 位 BIGINT，需要序列化为字符串\n2. **权限设计**：四级可见性 + 三级角色权限，需要前后端配合控制\n3. **AI 集成**：异步调用 + 超时重试 + 用户数据隔离\n\n欢迎 star 和 PR！',
- 12, 1, 1, 1, 0, 210, 25, 6, 2, 1, '2026-03-20 08:00:00', '2026-04-15 16:00:00', 0),
+ 12, 1, 1, 1, 0, 210, 25, 6, 1, 1, '2026-03-20 08:00:00', '2026-04-15 16:00:00', 0),
 
 (39, '我的第一个全栈博客网站',
  '## 项目介绍\n\n用 Nuxt 3 + Prisma + SQLite 搭建的个人博客网站。\n\n## 功能特性\n\n- 📝 Markdown 文章编辑与发布\n- 🏷️ 标签分类\n- 🔍 全文搜索\n- 🌙 暗色模式（跟随系统）\n- 📱 响应式设计\n- 💬 评论区（Giscus）\n\n## 技术栈\n\n```json\n{\n  \"frontend\": \"Nuxt 3\",\n  \"backend\": \"Nuxt Server API\",\n  \"database\": \"SQLite + Prisma\",\n  \"deploy\": \"Vercel\",\n  \"comment\": \"Giscus (GitHub Discussions)\"\n}\n```\n\n## 亮点\n- 使用 Nuxt 3 的 hybrid rendering（静态 + 服务端渲染）\n- Markdown 内容自动生成目录导航\n- 图片懒加载 + 渐进式加载\n\n## 项目链接\n[blog.techhub.com](https://blog.techhub.com) | [GitHub](https://github.com/user/my-blog)\n\n欢迎各位来参观指导！',
@@ -137,7 +137,7 @@ INSERT INTO `post` (`id`, `title`, `content`, `category_id`, `author_id`, `type`
 -- 站务管理
 (45, 'TechHub 社区发帖规范（2026版）',
  '## 总则\n\n为了营造良好的社区氛围，所有成员在 TechHub 发帖和回复时，请遵守以下规范。\n\n## 发帖规范\n\n### 标题要求\n- 标题应**概括核心内容**，避免模糊表述\n- 禁止使用「标题党」或误导性标题\n- 求助帖建议包含问题关键词，如「MySQL 连接超时」\n\n### 正文要求\n- 使用 Markdown 排版，善用标题层级\n- 代码使用代码块包裹并标注语言\n- 贴出完整错误信息而非仅截图\n\n## 回复规范\n\n- 回复应**有实质性内容**，避免纯表情或「顶」「+1」等无意义回复\n- 引用他人内容时使用引用语法\n- 遇到不懂的问题可以等待他人解答，不要随意猜测\n\n## 违规处理\n\n| 违规行为 | 首次 | 二次 | 三次 |\n|----------|------|------|------|\n| 广告/推广 | 删帖警告 | 禁言 7 天 | 封禁 |\n| 人身攻击 | 删帖警告 | 禁言 3 天 | 禁言 30 天 |\n| 恶意灌水 | 删帖 | 禁言 1 天 | 禁言 7 天 |\n\n## 修订历史\n- 2026-05-01：初版发布\n\n*本规范自发布之日起生效，管理团队保留最终解释权。*',
- 14, 1, 2, 1, 0, 345, 30, 7, 2, 1, '2026-05-01 08:00:00', '2026-05-01 08:00:00', 0),
+ 14, 1, 2, 1, 0, 345, 30, 7, 1, 1, '2026-05-01 08:00:00', '2026-05-01 08:00:00', 0),
 
 (46, '遇到 Bug 或有问题？这样反馈更高效',
  '## 提交 Bug 的正确姿势\n\n### 第一步：确认是否为 Bug\n\n在使用社区过程中遇到问题，请先确认：\n\n1. 是否是因为操作不当导致的？\n2. 是否已经是最新版本？\n3. 有没有清空浏览器缓存试过？\n\n### 第二步：收集信息\n\n```markdown\n## 环境信息\n- 浏览器及版本：Chrome 125\n- 操作系统：macOS 14.5\n- 页面路径：/posts/123\n\n## Bug 描述\n在点击「发布」按钮后页面无响应，控制台报错如下：\n\n## 复现步骤\n1. 进入发布页面\n2. 填写标题和内容\n3. 点击「发布」按钮\n4. 页面卡住无响应\n\n## 控制台日志\n```\nUncaught TypeError: Cannot read properties of null\n    at Object.submit (post.js:42)\n```\n```\n\n### 第三步：提交反馈\n\n- 在站务管理版块发帖，选择「反馈」分类\n- 或发送邮件至：feedback@techhub.com\n\n> 管理团队会定期查看反馈，一般在 24 小时内回复。',
@@ -159,7 +159,7 @@ INSERT INTO `comment` (`id`, `content`, `post_id`, `user_id`, `parent_id`, `repl
 (54, '谢谢补充！确实，`defineExpose` 在封装表单组件时非常实用。', 31, 2, 53, 1, 1, 0, 0, NULL, '2026-02-11 11:00:00'),
 
 -- Post 33 (微服务十大陷阱) 的回复
-(55, '第三条深有感触！我们之前用 HTTP 同步调用链路过长，一个接口调了 6 个服务，延迟爆炸。后来引入了消息队列做异步解耦，效果好很多。', 33, 3, NULL, NULL, 6, 1, 0, NULL, '2026-02-21 09:00:00'),
+(55, '第三条深有感触！我们之前用 HTTP 同步调用链路过长，一个接口调了 6 个服务，延迟爆炸。后来引入了消息队列做异步解耦，效果好很多。', 33, 3, NULL, NULL, 12, 6, 1, '2026-02-23 10:00:00', '2026-02-21 09:00:00'),
 (56, '可观测性这点太真实了，没有链路追踪的时候排查跨服务问题简直是灾难。', 33, 2, NULL, NULL, 3, 0, 0, NULL, '2026-02-22 14:00:00'),
 
 -- Post 34 (MySQL 联合索引) 的回复
@@ -177,7 +177,7 @@ INSERT INTO `comment` (`id`, `content`, `post_id`, `user_id`, `parent_id`, `repl
 (64, '神评机制的设计很有意思，避免了一味追求点赞数的短板。', 38, 2, NULL, NULL, 3, 0, 0, NULL, '2026-03-22 11:00:00'),
 
 -- Post 41 (学习路线图) 的回复
-(65, '很全面的路线图！建议在第一阶段加上「数据结构与算法」，虽然面试导向，但对思维能力提升很有帮助。', 41, 2, NULL, NULL, 6, 0, 0, NULL, '2026-02-26 10:00:00'),
+(65, '很全面的路线图！建议在第一阶段加上「数据结构与算法」，虽然面试导向，但对思维能力提升很有帮助。', 41, 2, NULL, NULL, 11, 5, 1, '2026-02-28 10:00:00', '2026-02-26 10:00:00'),
 (66, '感谢建议！确实，算法和数据结构应该作为贯穿始终的基础能力，已补充到路线图中。', 41, 1, 65, 2, 3, 0, 0, NULL, '2026-02-26 14:00:00'),
 
 -- Post 45 (发帖规范) 的回复
@@ -264,7 +264,11 @@ INSERT INTO `comment_recommend` (`id`, `comment_id`, `user_id`, `create_time`) V
 (157, 63, 3, '2026-03-22 11:00:00'),
 (158, 67, 1, '2026-05-01 11:00:00'),
 (159, 67, 3, '2026-05-01 12:00:00'),
-(160, 55, 1, '2026-02-22 09:00:00');
+(160, 55, 1, '2026-02-22 09:00:00'),
+(161, 55, 2, '2026-02-22 10:00:00'),
+(162, 55, 3, '2026-02-22 11:00:00'),
+(163, 65, 1, '2026-02-27 10:00:00'),
+(164, 65, 3, '2026-02-27 11:00:00');
 
 -- ==================== 通知 ====================
 INSERT INTO `notification` (`id`, `user_id`, `type`, `source_id`, `source_type`, `parent_id`, `content`, `is_read`, `create_time`) VALUES
@@ -284,4 +288,6 @@ INSERT INTO `notification` (`id`, `user_id`, `type`, `source_id`, `source_type`,
 (183, 1, 'LIKE', 38, 'POST', NULL, '用户 user 点赞了你的帖子《TechHub 技术社区论坛 —— 全栈开源项目》', 0, '2026-03-20 11:00:00'),
 (184, 1, 'REPLY', 63, 'COMMENT', 38, '用户 user 回复了你的帖子《TechHub 技术社区论坛 —— 全栈开源项目》', 0, '2026-03-21 10:00:00'),
 (185, 1, 'DIVINE', 63, 'COMMENT', 38, '你的评论被选为神评！', 0, '2026-03-25 14:00:00'),
-(186, 2, 'DIVINE', 67, 'COMMENT', 45, '你的评论被选为神评！', 0, '2026-05-03 10:00:00');
+(186, 2, 'DIVINE', 67, 'COMMENT', 45, '你的评论被选为神评！', 0, '2026-05-03 10:00:00'),
+(187, 3, 'DIVINE', 55, 'COMMENT', 33, '你的评论被选为神评！', 0, '2026-02-23 10:00:00'),
+(188, 2, 'DIVINE', 65, 'COMMENT', 41, '你的评论被选为神评！', 0, '2026-02-28 10:00:00');

@@ -20,7 +20,7 @@ CREATE TABLE `user` (
     `id`          BIGINT       NOT NULL COMMENT '雪花主键',
     `username`    VARCHAR(50)  NOT NULL COMMENT '用户名',
     `password`    VARCHAR(255) NOT NULL COMMENT 'BCrypt 加密密码',
-    `email`       VARCHAR(100) NOT NULL COMMENT '邮箱',
+    `email`       VARCHAR(100) DEFAULT NULL COMMENT '邮箱（选填）',
     `avatar_url`  VARCHAR(500) DEFAULT NULL COMMENT '头像URL（由x-file-storage上传后返回）',
     `bio`         VARCHAR(500) DEFAULT NULL COMMENT '个人简介',
     `role`        VARCHAR(20)  NOT NULL DEFAULT 'USER' COMMENT '角色 USER/MODERATOR/ADMIN',

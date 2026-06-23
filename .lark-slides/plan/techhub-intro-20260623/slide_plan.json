@@ -1,0 +1,180 @@
+{
+  "presentation_goal": "全面展示 TechHub 技术社区论坛的项目架构、技术选型、核心功能与安全设计，支持课程答辩与项目评审。",
+  "audience": "课程导师、技术评审、项目答辩委员会",
+  "theme_style": "深色科技风，暗色背景（#0d1117），主色为科技蓝（#58a6ff），辅助深蓝灰，强调色为亮青（#3fb950），与 TechHub 前端暗色模式优先理念统一。",
+  "visual_system": {
+    "background_strategy": "全部内容页使用统一深色背景 rgb(13,17,23)；封面和结尾使用深浅分层背景。",
+    "motif": "左侧彩色竖线作为页面标识条；顶部标题区域使用半透明深蓝条；卡片使用圆角细边框。",
+    "color_roles": {
+      "primary": "科技蓝 rgb(88,166,255) — 标题、主按钮、强调元素，约 60% 视觉权重",
+      "secondary": "深蓝灰 rgb(33,38,45) — 卡片背景、分区面板",
+      "accent": "亮青 rgb(63,185,80) — 关键数字、结论标注、行动点"
+    },
+    "cover_content_relationship": "封面使用深色底色 + 蓝色渐变左侧区域，内容页统一深色底 + 左侧蓝色竖线 motif",
+    "closing_relationship": "结尾页镜像封面布局，使用同色系渐变背景，主色一致"
+  },
+  "typography_constraints": {
+    "title_max_lines": 2,
+    "body_max_lines_per_box": 3,
+    "footer_max_lines": 1,
+    "long_text_handling": "长文本拆分为多卡片或使用图标+短句结构，不挤压文本框"
+  },
+  "verification_plan": {
+    "check_background_consistency": true,
+    "check_text_fit": true,
+    "check_visual_focus": true,
+    "check_asset_rendering": true
+  },
+  "slides": [
+    {
+      "page": 1,
+      "title": "TechHub 技术社区论坛",
+      "key_message": "前后端分离的轻量级技术社区，集成 AI 辅助阅读、神评机制、草稿保护与四级可见权限",
+      "layout_type": "title-cover",
+      "visual_focus": "大标题 + 副标题 + 蓝色渐变背景区域",
+      "asset_need": {
+        "asset_type": "logo",
+        "purpose": "品牌标识",
+        "suggested_query": "TechHub logo",
+        "fallback_if_missing": "使用大写 TECHUB 文字标识 + 左侧蓝色渐变装饰区块"
+      },
+      "text_density": "low",
+      "speaker_intent": "开场引入项目，建立第一印象"
+    },
+    {
+      "page": 2,
+      "title": "内容概览",
+      "key_message": "从项目背景、技术选型、系统架构到核心功能与安全设计，全面了解 TechHub",
+      "layout_type": "two-column",
+      "visual_focus": "左右两列展示 6 个内容板块，每列 3 项",
+      "asset_need": {
+        "asset_type": "none",
+        "purpose": "纯文本目录，用编号和图标区分",
+        "suggested_query": "",
+        "fallback_if_missing": "使用左侧竖线 + 编号 + 标题的卡片结构"
+      },
+      "text_density": "medium",
+      "speaker_intent": "概览 PPT 结构，建立听众预期"
+    },
+    {
+      "page": 3,
+      "title": "项目背景与目标",
+      "key_message": "整合三门课程知识，实现完整的内容创作、互动交流与知识管理平台",
+      "layout_type": "image-right-text-left",
+      "visual_focus": "右侧 4 个核心目标卡片",
+      "asset_need": {
+        "asset_type": "none",
+        "purpose": "用卡片展示核心目标",
+        "suggested_query": "",
+        "fallback_if_missing": "4 个蓝色边框卡片，每张包含图标 + 目标描述"
+      },
+      "text_density": "medium",
+      "speaker_intent": "说明项目定位与课程整合目标"
+    },
+    {
+      "page": 4,
+      "title": "技术选型总览",
+      "key_message": "Vue 3 + Spring Boot 3.5 + MyBatis-Plus + MySQL 8.0 + Redis 7 构建全栈技术方案",
+      "layout_type": "two-column",
+      "visual_focus": "左列前端技术栈，右列后端技术栈，底部中间 AI 集成",
+      "asset_need": {
+        "asset_type": "architecture_diagram",
+        "purpose": "展示前后端技术栈分层",
+        "suggested_query": "tech stack diagram",
+        "fallback_if_missing": "两组分层色块，左列标识前端技术（Vue3/Vite/ElementPlus/Pinia/ofetch），右列标识后端技术（SpringBoot/SpringSecurity/MyBatisPlus/MySQL/Redis）"
+      },
+      "text_density": "high",
+      "speaker_intent": "展示全栈技术选型与选型理由"
+    },
+    {
+      "page": 5,
+      "title": "系统架构设计",
+      "key_message": "经典 B/S 三层架构：Vue 3 SPA → Nginx 反向代理 → Spring Boot REST API → MySQL + Redis",
+      "layout_type": "architecture-diagram",
+      "visual_focus": "Mermaid 流程图展示从客户端到数据层的完整请求链路",
+      "asset_need": {
+        "asset_type": "architecture_diagram",
+        "purpose": "展示系统整体架构分层",
+        "suggested_query": "system architecture diagram client nginx spring boot mysql redis",
+        "fallback_if_missing": "使用 whiteboard mermaid 绘制四层架构图：客户端层 → 网关层 → 应用层 → 数据层"
+      },
+      "text_density": "low",
+      "speaker_intent": "可视化系统整体架构，体现三层分离设计"
+    },
+    {
+      "page": 6,
+      "title": "功能模块全景",
+      "key_message": "覆盖用户、帖子、回复、互动、通知、AI、神评、推荐、公告、管理十大模块",
+      "layout_type": "two-column",
+      "visual_focus": "2x2 网格 + 底部横幅展示 10 个功能模块",
+      "asset_need": {
+        "asset_type": "none",
+        "purpose": "用网格卡片展示功能模块",
+        "suggested_query": "",
+        "fallback_if_missing": "2列 x 5行的模块卡片，每张卡片包含模块名和一行描述"
+      },
+      "text_density": "high",
+      "speaker_intent": "展示系统功能的完整覆盖度"
+    },
+    {
+      "page": 7,
+      "title": "核心亮点功能",
+      "key_message": "AI 辅助阅读、神评机制、草稿保护、四级可见权限 — 四大差异化竞争力",
+      "layout_type": "two-column",
+      "visual_focus": "左上 AI 总结问答，右上 神评机制，左下 草稿自动保存，右下 四级可见权限",
+      "asset_need": {
+        "asset_type": "none",
+        "purpose": "四宫格展示核心功能",
+        "suggested_query": "",
+        "fallback_if_missing": "4 个功能卡片，每张含图标圆点 + 标题 + 2 行描述"
+      },
+      "text_density": "medium",
+      "speaker_intent": "突出差异化功能，展示项目创新点"
+    },
+    {
+      "page": 8,
+      "title": "安全设计",
+      "key_message": "JWT 无状态认证 + BCrypt 密码哈希 + 防 XSS + 可见权限校验 + 文件上传白名单",
+      "layout_type": "two-column",
+      "visual_focus": "左侧安全策略列表（5项），右侧防护效果说明",
+      "asset_need": {
+        "asset_type": "icon",
+        "purpose": "安全图标标识",
+        "suggested_query": "security shield icon",
+        "fallback_if_missing": "使用大号文字标注 + 左侧竖线"
+      },
+      "text_density": "medium",
+      "speaker_intent": "展示项目安全性，体现工程规范性"
+    },
+    {
+      "page": 9,
+      "title": "开发规范与工具链",
+      "key_message": "严格的代码规范、分支管理、Commit 约定与 CI/CD 流程保障代码质量",
+      "layout_type": "timeline",
+      "visual_focus": "水平时间线展示 5 个开发规范要点",
+      "asset_need": {
+        "asset_type": "none",
+        "purpose": "用时间线展示开发规范流程",
+        "suggested_query": "",
+        "fallback_if_missing": "5 个节点水平排列，每个节点包含标题 + 描述"
+      },
+      "text_density": "medium",
+      "speaker_intent": "展示团队协作规范与工程质量保障"
+    },
+    {
+      "page": 10,
+      "title": "感谢聆听",
+      "key_message": "TechHub — 为技术爱好者打造的社区论坛",
+      "layout_type": "conclusion",
+      "visual_focus": "居中大字标题 + 底部联系信息",
+      "asset_need": {
+        "asset_type": "none",
+        "purpose": "简洁收尾",
+        "suggested_query": "",
+        "fallback_if_missing": "居中大字 + 下方联系方式"
+      },
+      "text_density": "low",
+      "speaker_intent": "结束 PPT，留下联系方式与感谢"
+    }
+  ]
+}

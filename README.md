@@ -144,6 +144,7 @@ pnpm dev
 | `AI_PROVIDER`   | `openai`                             | AI 服务提供商    |
 | `AI_API_KEY`    | (空)                                 | AI API 密钥      |
 | `AI_API_URL`    | `https://api.openai.com/v1`         | AI API 地址      |
+| `CORS_ORIGINS`  | `http://localhost:5173`（dev 默认）  | CORS 白名单域名，逗号分隔多个；生产必填，缺失时拒绝启动 |
 | `AI_MODEL`      | `gpt-3.5-turbo`                     | AI 模型名称      |
 
 > **本地开发**：后端已集成 `spring-dotenv`，复制 `backend/.env.example` 为 `backend/.env` 并填入 `JWT_SECRET` 后即可 `mvn spring-boot:run`；该文件已被 gitignore，不会提交。
@@ -153,15 +154,7 @@ pnpm dev
 - 密码使用 BCrypt（cost=10）不可逆哈希存储
 - 接口采用 JWT 无状态认证，Token 有效期 24 小时
 - **JWT 签名密钥绝不硬编码**：配置与代码均无默认回退，缺失 `JWT_SECRET` 环境变量时应用 fail-fast 拒绝启动
-- 前端 Markdown 渲染使用 DOMPurify 防 XSS
-- 后端统一 JSON 响应格式，全局异常处理
-- 数据库使用 InnoDB 引擎，utf8mb4 字符集，雪花算法主键
-- 逻辑删除（软删除），数据不可逆删除
-
-## 安全规范
-
-- 密码使用 BCrypt（cost=10）不可逆哈希存储
-- 接口采用 JWT 无状态认证，Token 有效期 24 小时
+- **CORS 白名单精确匹配**：禁止 `allowedOriginPatterns("*")`，仅允许配置指定的前端域名携带凭据跨域；生产缺失 `CORS_ORIGINS` 即 fail-fast
 - 前端 Markdown 渲染使用 DOMPurify 防 XSS
 - 后端统一 JSON 响应格式，全局异常处理
 - 数据库使用 InnoDB 引擎，utf8mb4 字符集，雪花算法主键

@@ -24,7 +24,7 @@ const categories = ref<Category[]>([])
 const form = reactive({
   title: '',
   content: '',
-  categoryId: undefined as number | undefined,
+  categoryId: undefined as string | undefined,
   visibility: 0 as PostVisibility,
 })
 
@@ -83,14 +83,14 @@ async function loadPost() {
 
     form.title = post.title
     form.content = post.content
-    form.categoryId = Number(post.categoryId)
+    form.categoryId = post.categoryId
     form.visibility = post.visibility
 
     // Initialise draft data with current post content
     draftData.value = {
       title: post.title,
       content: post.content,
-      categoryId: Number(post.categoryId),
+      categoryId: post.categoryId,
       visibility: post.visibility,
       postId,
     }

@@ -20,14 +20,14 @@ export const categoryApi = {
     api<R<Category>>('/admin/categories', { method: 'POST', body: data }),
 
   /** Admin: update a category */
-  update: (id: number, data: CategoryUpdateRequest) =>
+  update: (id: string, data: CategoryUpdateRequest) =>
     api<R<Category>>(`/admin/categories/${id}`, { method: 'PATCH', body: data }),
 
   /** Admin: toggle category status */
-  toggleStatus: (id: number, status: number) =>
+  toggleStatus: (id: string, status: number) =>
     api<R<null>>(`/admin/categories/${id}/status`, { method: 'PATCH', body: { status } }),
 
   /** Admin: delete a category */
-  delete: (id: number) =>
+  delete: (id: string) =>
     api<R<null>>(`/admin/categories/${id}`, { method: 'DELETE' }),
 }

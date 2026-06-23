@@ -1,0 +1,5 @@
+{
+  "slide": {
+    "content": "<slide xmlns=\"http://www.larkoffice.com/sml/2.0\"><style><fill><fillColor color=\"rgb(13,17,23)\"/></fill></style><data><shape type=\"text\" topLeftX=\"80\" topLeftY=\"100\" width=\"800\" height=\"100\"><content textType=\"title\" fontSize=\"44\" color=\"rgb(88,166,255)\" bold=\"true\"><p>TechHub 技术社区论坛</p></content></shape><shape type=\"text\" topLeftX=\"80\" topLeftY=\"220\" width=\"800\" height=\"60\"><content textType=\"body\" fontSize=\"18\" color=\"rgb(230,237,243)\"><p>前后端分离的轻量级技术社区</p></content></shape></data></slide>"
+  }
+}

@@ -14,7 +14,7 @@ describe('postApi', () => {
   })
 
   it('getList sends GET /posts with query', async () => {
-    const params: PostListParams = { page: 1, size: 20, categoryId: 3 }
+    const params: PostListParams = { page: 1, size: 20, categoryId: '3' }
     mockApi.mockResolvedValue({} as R<PageResult<PostVO>>)
     await postApi.getList(params)
     expect(mockApi).toHaveBeenCalledWith('/posts', { query: params })
@@ -33,7 +33,7 @@ describe('postApi', () => {
   })
 
   it('create sends POST /posts with body', async () => {
-    const data: PostCreateRequest = { title: 'Hello', content: 'World', categoryId: 1, visibility: 0 }
+    const data: PostCreateRequest = { title: 'Hello', content: 'World', categoryId: '1', visibility: 0 }
     mockApi.mockResolvedValue({} as R<PostVO>)
     await postApi.create(data)
     expect(mockApi).toHaveBeenCalledWith('/posts', { method: 'POST', body: data })

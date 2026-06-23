@@ -78,7 +78,7 @@ function makePostVO(overrides: Partial<PostVO> = {}): PostVO {
 
 function makeCategory(overrides: Partial<Category> = {}): Category {
   return {
-    id: overrides.id ?? 1,
+    id: overrides.id ?? '1',
     name: overrides.name ?? 'Java',
     description: '',
     sortOrder: 1,
@@ -157,7 +157,7 @@ describe('PostManagePage', () => {
     mockGetList.mockReset()
 
     // Default resolved states
-    mockGetList.mockResolvedValue({ data: [makeCategory(), makeCategory({ id: 2, name: 'Python' })] })
+    mockGetList.mockResolvedValue({ data: [makeCategory(), makeCategory({ id: '2', name: 'Python' })] })
     mockGetPosts.mockResolvedValue(makePageResult([]))
   })
 

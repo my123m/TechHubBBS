@@ -31,16 +31,19 @@ public class AuthServiceImpl implements AuthService {
                 .eq(User::getUsername, request.getUsername())) > 0) {
             throw new BusinessException(ResultCode.CONFLICT, "用户名已存在");
         }
-        // Check unique email
-        if (userMapper.selectCount(new LambdaQueryWrapper<User>()
-                .eq(User::getEmail, request.getEmail())) > 0) {
-            throw new BusinessException(ResultCode.CONFLICT, "邮箱已被注册");
+        // Check unique email (only when email is provided)
+        String email = request.getEmail();
+        if (email != null && !email.isBlank()) {
+            if (userMapper.selectCount(new LambdaQueryWrapper<User>()
+                    .eq(User::getEmail, email)) > 0) {
+                throw new BusinessException(ResultCode.CONFLICT, "邮箱已被注册");
+            }
         }
         // Create user
         User user = new User();
         user.setUsername(request.getUsername());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setEmail(request.getEmail());
+        user.setEmail((email != null && !email.isBlank()) ? email : null);
         user.setRole("USER");
         user.setStatus(1);
         // 设置默认头像（DiceBear initials SVG，免费无需 API Key）

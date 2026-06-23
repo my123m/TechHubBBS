@@ -13,7 +13,7 @@ import type { Category, PostVO } from '@/api/types'
 const route = useRoute()
 const userStore = useUserStore()
 
-const categoryId = computed(() => Number(route.params.categoryId))
+const categoryId = computed(() => route.params.categoryId as string)
 
 // ── Category ──
 const category = ref<Category | null>(null)
@@ -147,7 +147,7 @@ onMounted(() => {
     />
 
     <!-- Notice Banner -->
-    <NoticeBanner :category-id="String(categoryId)" />
+    <NoticeBanner :category-id="categoryId" />
 
     <!-- ══════════════════════════════════════════ -->
     <!-- Sort Bar                                   -->
